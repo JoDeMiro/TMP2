@@ -1,0 +1,50 @@
+#cloud-config
+
+packages:
+  - git
+  - openssh-client
+
+
+write_files:
+- path: /bin/worker-add-user.sh
+  content: |
+    #!/bin/bash
+    export USR='ubuntu'
+    echo "---------------> Creating user \"$USR\" starts."
+    adduser --disabled-password --gecos "" $USR
+    echo "---------------> Creating user \"$USR\" finished."
+  permissions: '755'
+
+- path: /bin/worker-add-base-tools.sh
+  content: |
+    #!/bin/bash
+    echo "---------------> Installing base tools (pip,venv) starts."
+    echo "---------------> Installing base tools (pip,venv) finished."
+  permissions: '755'
+
+- path: /bin/worker-install.sh
+  content: |
+    #!/bin/bash
+    echo "---------------> Install Java stuffs for me."
+    sudo apt-get update -y
+    sudo apt install maven
+    ls -l /home/ubuntu/.local/bin
+    export PATH=$PATH:/home/ubuntu/.local/bin
+
+    echo "---------------> Get Micado-Optimizer-Tes Project"
+
+    git clone https://github.com/JoDeMiro/Micado-Optimizer-Test.git
+
+    mvn spring-boot:run
+
+    echo "---------------> Get Micado-Optimizer-Test Project finished."
+  permissions: '755'
+
+
+
+
+runcmd:
+- echo "---------------> JoDeMiro Deployment starts."
+- /bin/worker-add-base-tools.sh
+- su - ubuntu -c /bin/worker-install.sh
+- echo "---------------> JoDeMiro Deployment finished."
