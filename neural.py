@@ -18,7 +18,7 @@ class NeuralisHalo():
     def __init__(self):
         self.mlp = MLPRegressor(hidden_layer_sizes=(10, 5), # (10, 5)
                                 activation='tanh', # relu, tanh, logistic
-                                solver='adam',
+                                solver='sgd',                         # 'sgd', 'adam'
                                 batch_size='auto',
                                 learning_rate_init=0.01,
                                 max_iter=1,                           # incremental learning - one step
@@ -36,7 +36,8 @@ class NeuralisHalo():
         self.y_minmaxscaler = MinMaxScaler(feature_range=(-1,1))       # A range amibe skálázunk (-1, 1)
 
         self.mlp_fit_evaluation_time_holder = []
-        self.predicted_last_holder      = []
+        self.predicted_last_holder          = []
+        self.predicted_last_inverted_holder = []
 
     def scale_inputs(self, X_inputs):
         self.x_minmaxscaler.fit(X_inputs)
@@ -62,6 +63,11 @@ class NeuralisHalo():
         self.predicted_last = self.mlp.predict(self.X_scaled[-1:,])
         self.predicted_last_holder.append(self.predicted_last)
 
+    def invert_prediction_last(self):
+        predicted_last_inverted = self.y_minmaxscaler.inverse_transform(self.predicted_last.reshape(-1, 1)).flatten()
+        self.predicted_last_inverted = predicted_last_inverted
+        self.predicted_last_inverted_holder.append(self.predicted_last_inverted)
 
-
+    def invert_prediction_all(self):
+        self.predicted_all_inverted = self.y_minmaxscaler.inverse_transform(self.predicted_all.reshape(-1, 1)).flatten()
 
