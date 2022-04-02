@@ -63,6 +63,22 @@ class NeuralisHalo():
         self.predicted_last = self.mlp.predict(self.X_scaled[-1:,])
         self.predicted_last_holder.append(self.predicted_last)
 
+    def predict_for_given(self, __X):
+        # 1.    Csinálja meg a skálázást
+        __X_scaled = self.x_minmaxscaler.transform(__X)
+        # print('_______scaled______')
+        # print(__X_scaled)
+        # 2.    Csinálja meg a becslést
+        predicted_given = self.mlp.predict(__X_scaled)
+        # print('_______predicted______')
+        # print(predicted_given)
+        # 3.    Csinálja meg a visszatranszformációt
+        predicted_given_inverted = self.y_minmaxscaler.inverse_transform(predicted_given.reshape(-1, 1)).flatten()
+        # print('_______inverted_______')
+        # print(predicted_given_inverted)
+        return predicted_given_inverted
+
+
     def invert_prediction_last(self):
         predicted_last_inverted = self.y_minmaxscaler.inverse_transform(self.predicted_last.reshape(-1, 1)).flatten()
         self.predicted_last_inverted = predicted_last_inverted
