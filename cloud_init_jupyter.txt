@@ -34,7 +34,7 @@ write_files:
     virtualenv notebook
     source notebook/bin/activate
     wget --no-cache https://raw.githubusercontent.com/JoDeMiro/TMP/main/requirements_jupyter.txt
-    pip3 install -r requirements_driver.txt
+    pip3 install -r requirements_jupyter.txt
     jupyter notebook --generate-config jupyter notebook --generate-config
     jupyter contrib nbextension install --user
     jupyter nbextension available
